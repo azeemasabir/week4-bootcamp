@@ -1,0 +1,124 @@
+
+
+# 📝 1. To-Do List App Overview
+
+## ⚙️ Project Structure
+
+```
+todo-flask/
+│── app.py       # main app (or app + routes split)
+│── models.py    # Task model (id, title, done)
+│── routes.py    # (if separated) all endpoints
+│── templates/
+│     ├── index.html  # main UI (list tasks, add task, buttons)
+```
+
+## 🔄 Flow
+
+1. **User visits `/`**
+   → `index()` route runs → fetches all `Task` objects from DB → passes to `index.html`.
+
+2. **Add new task**
+
+   * User types title in form → submits to `/add` (POST).
+   * `add()` route creates a new `Task` in DB → redirects back to `/`.
+
+3. **Mark as done**
+
+   * User clicks “Done” → `/done/<id>` runs.
+   * That updates the `done` field to `True` → saves to DB → reloads `/`.
+
+4. **Delete task**
+
+   * User clicks “Delete” → `/delete/<id>` runs.
+   * That deletes the task from DB → reloads `/`.
+
+---
+
+## 🗂️ Diagram (To-Do List)
+
+```
+Browser (User)
+   |
+   |   (HTTP Request: GET/POST)
+   v
+Flask Routes (index, add, done, delete)
+   |
+   |   (SQLAlchemy ORM)
+   v
+Database (SQLite: tasks table)
+   |
+   |   (Query Results)
+   v
+Templates (index.html)
+   |
+   v
+Browser (Rendered HTML)
+```
+
+---
+
+# 💰 2. Expense Tracker App Overview
+
+## ⚙️ Project Structure
+
+```
+expense-tracker/
+│── app.py         # creates Flask app and DB
+│── models.py      # Expense model (id, amount, category, desc, date)
+│── routes.py      # all routes (index, add, delete, report)
+│── templates/
+│     ├── layout.html  # base layout
+│     ├── index.html   # dashboard
+│     └── report.html  # charts
+```
+
+## 🔄 Flow
+
+1. **User visits `/` (Dashboard)**
+
+   * `index()` route checks query param `month`.
+   * Fetches expenses from DB for that month.
+   * Passes list + total to `index.html`.
+
+2. **Add expense**
+
+   * Form POSTs to `/add`.
+   * `add()` route validates input, saves to DB, redirects to `/`.
+
+3. **Delete expense**
+
+   * `/delete/<id>` finds and deletes the record, reloads dashboard.
+
+4. **Reports**
+
+   * `/report?month=YYYY-MM` runs queries:
+
+     * **Pie Chart**: expenses grouped by category.
+     * **Line Chart**: expenses grouped by day.
+   * Sends that data to `report.html`.
+   * Chart.js renders interactive graphs.
+
+---
+
+## 🗂️ Diagram (Expense Tracker)
+
+```
+Browser (User)
+   |
+   |   (GET / , POST /add , GET /report)
+   v
+Flask Routes (index, add, delete, report)
+   |
+   |   (SQLAlchemy ORM)
+   v
+Database (SQLite: expenses table)
+   |
+   |   (Query Results)
+   v
+Templates (index.html, report.html)
+   |         ^
+   |         |   (JS renders charts with Chart.js)
+   v         |
+Browser (Rendered HTML + Charts)
+```
